@@ -32,27 +32,14 @@ function applyFilters() {
     const saturate = document.getElementById('saturate').value;
     const colorFilter = document.getElementById('colorFilter').value;
 
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.filter = `brightness(${brightness}%) contrast(${contrast}%) grayscale(${grayscale}%) sepia(${sepia}%) invert(${invert}%) hue-rotate(${hueRotate}deg) saturate(${saturate}%)`;
     ctx.drawImage(originalImage, 0, 0, canvas.width, canvas.height);
 
-    applyColorFilter(colorFilter);
-}
-
-function applyColorFilter(color) {
-    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    const data = imageData.data;
-
-    const rFilter = parseInt(color.substr(1, 2), 16);
-    const gFilter = parseInt(color.substr(3, 2), 16);
-    const bFilter = parseInt(color.substr(5, 2), 16);
-
-    for (let i = 0; i < data.length; i += 4) {
-        data[i] = (data[i] + rFilter) / 2;
-        data[i + 1] = (data[i + 1] + gFilter) / 2;
-        data[i + 2] = (data[i + 2] + bFilter) / 2;
+    if (colorFilter !== '#ffffff') {
+        ctx.fillStyle = colorFilter + '80'; // Apply color with transparency
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
-
-    ctx.putImageData(imageData, 0, 0);
 }
 
 const controls = document.querySelectorAll('.controls input');
@@ -132,6 +119,5 @@ document.getElementById('reset').addEventListener('click', () => {
         canvas.height = originalImage.height;
         ctx.drawImage(originalImage, 0, 0);
         controls.forEach(control => control.value = control.defaultValue);
-        document.getElementById('colorFilter').value = '#ffffff'; // Reset color filter
     }
 });
