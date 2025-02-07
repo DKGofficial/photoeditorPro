@@ -12,21 +12,6 @@ function handleImageUpload(event) {
     reader.onload = function(e) {
         const img = new Image();
         img.onload = function() {
-            const maxWidth = window.innerWidth * 0.9;
-            const maxHeight = window.innerHeight * 0.6;
-            let width = img.width;
-            let height = img.height;
-
-            if (width > maxWidth || height > maxHeight) {
-                const widthRatio = maxWidth / width;
-                const heightRatio = maxHeight / height;
-                const ratio = Math.min(widthRatio, heightRatio);
-                width = width * ratio;
-                height = height * ratio;
-            }
-
-            canvas.style.width = `${width}px`;
-            canvas.style.height = `${height}px`;
             canvas.width = img.width;
             canvas.height = img.height;
             ctx.drawImage(img, 0, 0);
@@ -45,9 +30,29 @@ function applyFilters() {
     const invert = document.getElementById('invert').value;
     const hueRotate = document.getElementById('hueRotate').value;
     const saturate = document.getElementById('saturate').value;
+    const colorFilter = document.getElementById('colorFilter').value;
 
     ctx.filter = `brightness(${brightness}%) contrast(${contrast}%) grayscale(${grayscale}%) sepia(${sepia}%) invert(${invert}%) hue-rotate(${hueRotate}deg) saturate(${saturate}%)`;
     ctx.drawImage(originalImage, 0, 0, canvas.width, canvas.height);
+
+    applyColorFilter(colorFilter);
+}
+
+function applyColorFilter(color) {
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const data = imageData.data;
+
+    const rFilter = parseInt(color.substr(1, 2), 16);
+    const gFilter = parseInt(color.substr(3, 2), 16);
+    const bFilter = parseInt(color.substr(5, 2), 16);
+
+    for (let i = 0; i < data.length; i += 4) {
+        data[i] = (data[i] + rFilter) / 2;
+        data[i + 1] = (data[i + 1] + gFilter) / 2;
+        data[i + 2] = (data[i + 2] + bFilter) / 2;
+    }
+
+    ctx.putImageData(imageData, 0, 0);
 }
 
 const controls = document.querySelectorAll('.controls input');
@@ -106,21 +111,7 @@ function downloadBlob(blob) {
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
     link.download = 'edited_image.jpg';
-
-    if (navigator.userAgent.match(/(iPhone|iPad|iPod|Android)/)) {
-        const reader = new FileReader();
-        reader.onloadend = function() {
-            const a = document.createElement('a');
-            a.href = reader.result;
-            a.download = 'edited_image.jpg';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-        };
-        reader.readAsDataURL(blob);
-    } else {
-        link.click();
-    }
+    link.click();
 }
 
 document.getElementById('download').addEventListener('click', () => {
@@ -141,5 +132,6 @@ document.getElementById('reset').addEventListener('click', () => {
         canvas.height = originalImage.height;
         ctx.drawImage(originalImage, 0, 0);
         controls.forEach(control => control.value = control.defaultValue);
+        document.getElementById('colorFilter').value = '#ffffff'; // Reset color filter
     }
 });
