@@ -1,90 +1,114 @@
 body {
     font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    margin: 0;
+    padding: 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 20px;
-    background-color: #f4f4f4;
-    margin: 0;
+}
+
+h1 {
+    color: #333;
+    margin-bottom: 20px;
 }
 
 .editor-container {
     background: #fff;
-    padding: 20px;
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    width: 90%;
     max-width: 800px;
-    width: 100%;
-    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 canvas {
     max-width: 100%;
     border: 1px solid #ddd;
     margin-bottom: 20px;
+    border-radius: 10px;
 }
 
 .controls {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 15px;
+    width: 100%;
+    margin-bottom: 20px;
 }
 
-.control-group {
-    display: flex;
-    flex-direction: column;
-}
-
-.control-group label {
+.controls label {
+    font-size: 14px;
+    color: #555;
     margin-bottom: 5px;
-    font-weight: bold;
+    display: block;
 }
 
-.control-group input[type="range"],
-.control-group input[type="number"],
-.control-group input[type="color"] {
-    margin-bottom: 10px;
+.controls input[type="range"] {
+    width: 100%;
 }
 
-.buttons {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 20px;
-}
-
-.buttons button {
-    padding: 10px 20px;
+.controls input[type="color"] {
+    width: 100%;
+    height: 40px;
     border: none;
-    border-radius: 5px;
     cursor: pointer;
+}
+
+.controls input[type="number"] {
+    width: calc(100% - 10px);
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+button, .filter-btn {
     background-color: #007bff;
     color: white;
+    border: none;
+    padding: 10px 20px;
+    margin: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
-.buttons button:hover {
+button:hover, .filter-btn:hover {
     background-color: #0056b3;
 }
+
+button:active, .filter-btn:active {
+    background-color: #003f7f;
+}
+
+.filter-btn {
+    background-color: #28a745;
+}
+
+.filter-btn:hover {
+    background-color: #1e7e34;
+}
+
+#upload {
+    margin-bottom: 20px;
+}
+
+#imageSizeDisplay {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #333;
+    text-align: center;
+} 
 
 @media (max-width: 600px) {
     .controls {
         grid-template-columns: 1fr;
     }
 
-    .buttons {
-        flex-direction: column;
-        gap: 10px;
+    button, .filter-btn {
+        width: 100%;
     }
-
-    canvas {
-        max-width: 100%;
-        height: auto;
-    }
-} 
-
-/* Added color filter styles */
-.control-group input[type="color"] {
-    height: 40px;
-    border: none;
-    cursor: pointer;
-    padding: 0;
 }
