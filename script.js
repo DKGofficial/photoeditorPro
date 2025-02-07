@@ -12,6 +12,7 @@ function handleImageUpload(event) {
     reader.onload = function(e) {
         const img = new Image();
         img.onload = function() {
+            // Set canvas size to match the image but restrict it with max dimensions for mobile
             const maxWidth = window.innerWidth * 0.9;
             const maxHeight = window.innerHeight * 0.6;
             let width = img.width;
@@ -25,9 +26,11 @@ function handleImageUpload(event) {
                 height = height * ratio;
             }
 
-            canvas.width = width;
-            canvas.height = height;
-            ctx.drawImage(img, 0, 0, width, height);
+            canvas.style.width = `${width}px`;
+            canvas.style.height = `${height}px`;
+            canvas.width = img.width;
+            canvas.height = img.height;
+            ctx.drawImage(img, 0, 0);
             originalImage = img;
         };
         img.src = e.target.result;
