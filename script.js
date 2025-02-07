@@ -12,7 +12,6 @@ function handleImageUpload(event) {
     reader.onload = function(e) {
         const img = new Image();
         img.onload = function() {
-            // Set canvas size to match the image but restrict it with max dimensions for mobile
             const maxWidth = window.innerWidth * 0.9;
             const maxHeight = window.innerHeight * 0.6;
             let width = img.width;
@@ -107,7 +106,21 @@ function downloadBlob(blob) {
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
     link.download = 'edited_image.jpg';
-    link.click();
+
+    if (navigator.userAgent.match(/(iPhone|iPad|iPod|Android)/)) {
+        const reader = new FileReader();
+        reader.onloadend = function() {
+            const a = document.createElement('a');
+            a.href = reader.result;
+            a.download = 'edited_image.jpg';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        };
+        reader.readAsDataURL(blob);
+    } else {
+        link.click();
+    }
 }
 
 document.getElementById('download').addEventListener('click', () => {
