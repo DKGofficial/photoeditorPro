@@ -12,9 +12,22 @@ function handleImageUpload(event) {
     reader.onload = function(e) {
         const img = new Image();
         img.onload = function() {
-            canvas.width = img.width;
-            canvas.height = img.height;
-            ctx.drawImage(img, 0, 0);
+            const maxWidth = window.innerWidth * 0.9;
+            const maxHeight = window.innerHeight * 0.6;
+            let width = img.width;
+            let height = img.height;
+
+            if (width > maxWidth || height > maxHeight) {
+                const widthRatio = maxWidth / width;
+                const heightRatio = maxHeight / height;
+                const ratio = Math.min(widthRatio, heightRatio);
+                width = width * ratio;
+                height = height * ratio;
+            }
+
+            canvas.width = width;
+            canvas.height = height;
+            ctx.drawImage(img, 0, 0, width, height);
             originalImage = img;
         };
         img.src = e.target.result;
