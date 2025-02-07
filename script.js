@@ -42,30 +42,26 @@ document.getElementById('applyResize').addEventListener('click', () => {
     const width = parseInt(document.getElementById('resizeWidth').value);
     const height = parseInt(document.getElementById('resizeHeight').value);
     const targetKB = parseInt(document.getElementById('resizeKB').value);
-    const dpi = parseInt(document.getElementById('dpi').value);
 
     if (targetKB > 0) {
-        resizeToTargetSize(targetKB, dpi);
+        resizeToTargetSize(targetKB);
     } else if (width && height) {
-        resizeImage(width, height, dpi);
+        resizeImage(width, height);
     }
 });
 
-function resizeImage(width, height, dpi = 72) {
+function resizeImage(width, height) {
     const tempCanvas = document.createElement('canvas');
     const tempCtx = tempCanvas.getContext('2d');
     tempCanvas.width = width;
     tempCanvas.height = height;
     tempCtx.drawImage(canvas, 0, 0, width, height);
-    
-    setDPI(tempCanvas, dpi);
-    
     canvas.width = width;
     canvas.height = height;
     ctx.drawImage(tempCanvas, 0, 0);
 }
 
-function resizeToTargetSize(targetKB, dpi = 72) {
+function resizeToTargetSize(targetKB) {
     const targetBytes = targetKB * 1024;
     let minQuality = 0.01;
     let maxQuality = 1.0;
@@ -88,25 +84,7 @@ function resizeToTargetSize(targetKB, dpi = 72) {
         }, 'image/jpeg', quality);
     }
 
-    setDPI(canvas, dpi);
     binarySearchQuality(minQuality, maxQuality);
-}
-
-function setDPI(canvas, dpi) {
-    const ctx = canvas.getContext('2d');
-    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    
-    const tempCanvas = document.createElement('canvas');
-    tempCanvas.width = canvas.width;
-    tempCanvas.height = canvas.height;
-    const tempCtx = tempCanvas.getContext('2d');
-    tempCtx.putImageData(imageData, 0, 0);
-
-    const scale = dpi / 96;
-    canvas.width = Math.floor(canvas.width * scale);
-    canvas.height = Math.floor(canvas.height * scale);
-    ctx.scale(scale, scale);
-    ctx.drawImage(tempCanvas, 0, 0);
 }
 
 function downloadBlob(blob) {
@@ -118,11 +96,9 @@ function downloadBlob(blob) {
 
 document.getElementById('download').addEventListener('click', () => {
     const targetKB = parseInt(document.getElementById('resizeKB').value);
-    const dpi = parseInt(document.getElementById('dpi').value);
     if (targetKB > 0) {
-        resizeToTargetSize(targetKB, dpi);
+        resizeToTargetSize(targetKB);
     } else {
-        setDPI(canvas, dpi);
         canvas.toBlob(blob => {
             downloadBlob(blob);
         }, 'image/jpeg', 1);
